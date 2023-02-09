@@ -1,0 +1,30 @@
+-- This is the backup command for add a scheduled task in crontab
+/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'admin!@#123' -d FaxNoLogsDB -i /var/opt/mssql/data/scripts/DatabaseBackup.sql >> /tmp/faxnologsdb-backup.log 2>&1
+
+-- Must create folders
+1. C:\faxnologs\data\Backup (/var/opt/mssql/data/Backup)
+1. C:\faxnologs\data\scripts (/var/opt/mssql/data/scripts)
+
+-- Must install cron & systemctl
+1. apt-get update
+2. apt-get install cron
+3. apt-get install systemctl
+4. apt-get install --reinstall rsyslog
+
+-- Must start services
+1. cron (service cron start or restart)
+2. rsyslog (service rsyslog start or restart)
+
+-- Check that services cron(scheduling) and rsyslog(system logging) are running
+[ + ] cron
+[ + ] rsyslog
+.
+.
+.
+.
+.
+
+-- A task at the host's Task Scheduler must be created to run the following commands:
+docker exec --user root faxnologs_db bash -c "service cron start; service rsyslog start"
+
+The above task must be scheduled for daily run (e.g. 07:00:00), with flag "Run task as soon as possible after a scheduled start is missed" at tab "Settings", turned on.
